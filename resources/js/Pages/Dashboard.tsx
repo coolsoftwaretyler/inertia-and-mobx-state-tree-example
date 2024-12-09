@@ -1,12 +1,29 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { CounterStore } from '@/models/CounterStore';
 import { Head } from '@inertiajs/react';
-import { useState } from 'react';
+import { observer } from 'mobx-react-lite';
+import { useRef } from 'react';
 
-export default function Dashboard() {
-    const [count, setCount] = useState(0);
+interface Props {
+    count: number;
+}
 
-    const increment = () => setCount((prev) => prev + 1);
-    const decrement = () => setCount((prev) => prev - 1);
+function Dashboard({ count: initialCount }: Props) {
+    const store = useRef(CounterStore.create({ count: initialCount }));
+
+    const increment = () => {
+        store.current.increment();
+    };
+
+    const decrement = () => {
+        store.current.decrement();
+    };
+
+    const saveToServer = () => {
+        store.current.saveToServer();
+    };
+
+    const { count, isSaving } = store.current;
 
     return (
         <AuthenticatedLayout
@@ -43,6 +60,17 @@ export default function Dashboard() {
                                         Increment
                                     </button>
                                 </div>
+                                <div className="mt-4">
+                                    <button
+                                        onClick={saveToServer}
+                                        disabled={isSaving}
+                                        className="rounded-md bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                                    >
+                                        {isSaving
+                                            ? 'Saving...'
+                                            : 'Save to Server'}
+                                    </button>
+                                </div>
                             </div>
                             <div className="mt-6 border-t pt-4 dark:border-gray-700">
                                 You're logged in!
@@ -54,3 +82,5 @@ export default function Dashboard() {
         </AuthenticatedLayout>
     );
 }
+
+export default observer(Dashboard);

@@ -22,6 +22,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'show'])->name('dashboard');
+    Route::post('/counter/increment', [\App\Http\Controllers\DashboardController::class, 'increment'])->name('counter.increment');
+    Route::post('/counter/decrement', [\App\Http\Controllers\DashboardController::class, 'decrement'])->name('counter.decrement');
 });
 
 require __DIR__.'/auth.php';
