@@ -10,6 +10,9 @@ export const CounterStore = types
         setIsSaving(isSaving: boolean) {
             self.isSaving = isSaving;
         },
+        setCount(count: number) {
+            self.count = count;
+        },
     }))
     .actions((self) => ({
         increment() {
@@ -20,11 +23,31 @@ export const CounterStore = types
         },
         async saveToServer() {
             self.setIsSaving(true);
-            await router.post(route('counter.increment'), {
-                value: self.count,
-            });
-            self.setIsSaving(false);
+            try {
+                await router.put(
+                    route('counter.update'),
+                    {
+                        value: self.count,
+                    },
+                    {
+                        preserveState: false,
+                        preserveScroll: true,
+                    },
+                );
+            } finally {
+                self.setIsSaving(false);
+            }
         },
     }));
 
 export type ICounterStore = Instance<typeof CounterStore>;
+
+export const counterStore = CounterStore.create({ count: 0 });
+
+// Update store from Inertia page props
+router.on('navigate', (event) => {
+    const page = event.detail.page;
+    if ('count' in page.props) {
+        counterStore.setCount(page.props.count as number);
+    }
+});

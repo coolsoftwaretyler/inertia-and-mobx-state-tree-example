@@ -1,29 +1,23 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { CounterStore } from '@/models/CounterStore';
+import { counterStore } from '@/models/CounterStore';
 import { Head } from '@inertiajs/react';
 import { observer } from 'mobx-react-lite';
-import { useRef } from 'react';
 
-interface Props {
-    count: number;
-}
 
-function Dashboard({ count: initialCount }: Props) {
-    const store = useRef(CounterStore.create({ count: initialCount }));
-
+function Dashboard() {
     const increment = () => {
-        store.current.increment();
+        counterStore.increment();
     };
 
     const decrement = () => {
-        store.current.decrement();
+        counterStore.decrement();
     };
 
     const saveToServer = () => {
-        store.current.saveToServer();
+        counterStore.saveToServer();
     };
 
-    const { count, isSaving } = store.current;
+    const { count, isSaving } = counterStore;
 
     return (
         <AuthenticatedLayout

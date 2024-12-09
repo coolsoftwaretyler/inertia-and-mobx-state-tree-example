@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Counter;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,10 +22,10 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function increment(): RedirectResponse
+    public function increment(Request $request): RedirectResponse
     {
         $counter = auth()->user()->counter;
-        $counter->increment('value');
+        $counter->update(['value' => $request->input('value')]);
 
         return redirect()->back();
     }
